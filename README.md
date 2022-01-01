@@ -38,7 +38,7 @@ API_KEY = "your_api_key"
 client = Client(token = API_KEY)
 
 # Make a request to Perspective API with a text to analyze and requested attributes
-response = client.analyze(text = "Hey! How are you?", requestedAttributes = [Attributes.TOXICITY, "insult"])
+response = client.analyze(text = "Hey! How are you?", requestedAttributes = [Attributes.TOXICITY, Attributes.INSULT])
 
 # Print the response (dict)
 print(response)
