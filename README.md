@@ -14,8 +14,6 @@ python -m pip install --upgrade git+https://github.com/Yilmaz4/perspective.py.gi
 
 You need to get an API key from Google to use Perspective API. Instructions are explained in [this article](https://developers.perspectiveapi.com/s/docs-get-started).
 
-A sample API key looks like this: AIzaSyA-zyguANWE1STU9EtfTLrS3ri1956tdAs
-
 ## Command arguments
 
 > `text: str` The text to analyze
