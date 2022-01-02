@@ -9,6 +9,7 @@ setup(
     author_email="ymzymz2007@gmail.com",
     license='MIT',
     install_requires=['google-api-python-client', 'pycountry', 'httplib2', 'typing'],
+    url="https://github.com/Yilmaz4/perspective.py/",
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -23,4 +24,6 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
     ],
+    download_url="https://github.com/Yilmaz4/perspective.py/archive/refs/tags/v0.1.0.tar.gz",
+    keywords=["perspective-api", "api-wrapper", "python", "api"]
 )
