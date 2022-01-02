@@ -414,8 +414,10 @@ class Client:
         except errors.HttpError as exceptionDetails:
             if str(exceptionDetails).startswith(f"<HttpError 400 when requesting https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1&key={token} returned \"API key not valid. Please pass a valid API key.\"."):
                 raise InvalidTokenError("The token you've entered is not a valid API key. Refer to https://developers.perspectiveapi.com/s/docs-get-started to get a new API key.")
+            else:
+                raise HTTPException("An unknown error occured. Please try again. Exception details: " + str(exceptionDetails))
         except httplib2.error.ServerNotFoundError as exceptionDetails:
-            raise HTTPException("Unable to connect to the API.")
+            raise HTTPException("Unable to connect to the API. Please check your internet connection.")
         else:
             self.__token = token
 
@@ -484,14 +486,14 @@ class Client:
             A dictionary containing percents of every attribute requested.
         """
         if text.replace(" ", "") == "":
-            raise EmptyTextError("Text cannot be empty.")
+            raise EmptyTextError("The text cannot be empty.")
 
         for attribute in requestedAttributes:
             if f'{attribute=}'.split('=')[1].replace('\'','').upper() in ["TOXICITY", "SEVERE_TOXICITY", "IDENTIFY_ATTACK", "INSULT", "PROFANITY", "THREAT_EXPERIMENTAL", "TOXICITY_EXPERIMENTAL", "SEVERE_TOXICITY_EXPERIMENTAL", "IDENTIFY_ATTACK_EXPERIMENTAL", "INSULT_EXPERIMENTAL", "PROFANITY_EXPERIMENTAL", "THREAT_EXPERIMENTAL", "SEXUALLY_EXPLICIT", "FLIRTATION", "ATTACK_ON_AUTHOR", "ATTACK_ON_COMMENTER", "INCOHERENT", "INFLAMMATORY", "LIKELY_TO_REJECT", "OBSCENE", "SPAM", "UNSUBSTANTIAL"]:
                 requestedAttributes[requestedAttributes.index(attribute)] = f'{attribute=}'.split('=')[1].replace('\'','').upper()
             else:
                 if not self.__get_attribute(f'{attribute=}'.split('=')[1].replace('\'','').upper()):
-                    raise UnknownAttributeError("Attribute \"{}\" is unknown. See https://developers.perspectiveapi.com/s/about-the-api-attributes-and-languages for all attributes.".format(f'{attribute=}'.split('=')[1].replace('\'','')))
+                    raise UnknownAttributeError("Attribute \"{}\" is unknown.".format(f'{attribute=}'.split('=')[1].replace('\'','')))
                 else:
                     requestedAttributes[requestedAttributes.index(attribute)] = self.__get_attribute(f'{attribute=}'.split('=')[1].replace('\'','').upper())
 
@@ -518,7 +520,8 @@ class Client:
                 attribute = str(exceptionDetails).replace(f"<HttpError 400 when requesting https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key={self.__token}&alt=json returned \"Attribute ", "").split()[0]
                 language = str(exceptionDetails)[str(exceptionDetails).find(attribute):].replace(attribute, "").replace(" does not support request languages: ", "").split("\"")[0]
                 raise UnsupportedLanguageError(f"{self.__get_language_name(language=language)} ({self.__get_language_code(language=language)}) is not supported by \"{attribute}\" attribute.")
-                return
+            else:
+                raise HTTPException("An unknown error occured. Please try again. Exception details: " + str(exceptionDetails))
         result = {}
 
         for attribute in requestedAttributes:
