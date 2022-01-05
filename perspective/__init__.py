@@ -5,7 +5,7 @@ Perspective API Wrapper
 An easy-to-use API wrapper for Perspective API written in Python.
 """
 
-__title__ = "perspective"
+__title__ = "perspective.py"
 __author__ = "Yilmaz04"
 __license__ = "MIT"
 __copyright__ = "Copyright 2021 Yilmaz Alpaslan"

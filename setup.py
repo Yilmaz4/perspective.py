@@ -1,9 +1,9 @@
 from setuptools import find_packages, setup
 
 setup(
-    name='perspective',
+    name='perspective.py',
     packages=find_packages(include=['perspective']),
-    version='0.1.0',
+    version='0.1.1',
     description='An easy-to-use API wrapper for Perspective API written in Python.',
     author='Yilmaz04',
     author_email="ymzymz2007@gmail.com",
