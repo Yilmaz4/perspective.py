@@ -83,7 +83,7 @@ class Utils:
         response: :class:`dict`
             The dictionary that the `analyze` function returned.
         title: :class:`Optional[str]`
-            The title for the chart. Default is "Perspective API result".+
+            The title for the chart. Default is "Perspective API result".
         grid_lines: :class:`bool`
             Whether the chart should have grid lines or not. Default is `True`
         **kwargs
@@ -139,9 +139,9 @@ class Utils:
         filename: :class:`str`
             The path that you want the file to be saved, including the filename (such as `C:\path\to\my\file.png`)
         title: :class:`Optional[str]`
-            The title for the chart. If `None`, it'll be "Perspective API result".
+            The title for the chart. Default is "Perspective API result".
         grid_lines: :class:`bool`
-            Whether the chart should have grid lines or not.
+            Whether the chart should have grid lines or not. Default is `True`
         **kwargs
             Other keyword arguments that belong to `matplotlib.pyplot.barh` function; such as `height`, `width` etc.
         """
