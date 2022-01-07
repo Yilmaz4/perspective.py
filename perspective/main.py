@@ -24,6 +24,8 @@ from googleapiclient import discovery, errors
 from typing import Optional
 from pycountry import languages
 
+from .attributes import Attributes
+
 import httplib2
 import difflib
 
@@ -41,365 +43,6 @@ class HTTPException(Exception):
 
 class UnsupportedLanguageError(Exception):
     pass
-
-class Attributes:
-    # Production attributes
-    class TOXICITY:
-        """
-        ## TOXICITY
-        A rude, disrespectful, or unreasonable comment that is likely to make people leave a discussion.
-
-        ### Supported language(s)
-
-        Arabic (ar), Chinese (zh), Czech (cs), Dutch (nl), English (en), French (fr), German (de),
-        Hindi (hi), Hinglish (hi-Latn), Indonesian (id), Italian (it), Japanese (ja), Korean (ko),
-        Polish (pl), Portuguese (pt), Russian (ru), Spanish (es)
-        """
-        supportedLanguages = ["ar", "zh", "cs", "nl", "en", "fr", "de", "hi", "id", "it", "ja", "ko", "pl", "pt", "ru", "es"]
-        description = "A rude, disrespectful, or unreasonable comment that is likely to make people leave a discussion."
-        isExperimental = False
-        def __repr__(self):
-            return "TOXICITY"
-    TOXICITY = TOXICITY()
-    class SEVERE_TOXICITY:
-        """
-        ## SEVERE_TOXICITY
-        A very hateful, aggressive, disrespectful comment or otherwise very likely to make a user leave
-        a discussion or give up on sharing their perspective. This attribute is much less sensitive to
-        more mild forms of toxicity, such as comments that include positive uses of curse words.
-
-        ### Supported language(s)
-
-        German (de), English (en), Spanish (es), French (fr), Italian (it), Portuguese (pt), Russian (ru)
-        """
-        supportedLanguages = ["de", "en", "es", "fr", "it", "pt", "ru"]
-        description = "A very hateful, aggressive, disrespectful comment or otherwise very likely to make a user leave a discussion or give up on sharing their perspective. This attribute is much less sensitive to more mild forms of toxicity, such as comments that include positive uses of curse words."
-        isExperimental = False
-        def __repr__(self):
-            return "SEVERE_TOXICITY"
-    SEVERE_TOXICITY = SEVERE_TOXICITY()
-    class IDENTIFY_ATTACK:
-        """
-        ## IDENTIFY_ATTACK
-        Negative or hateful comments targeting someone because of their identity.
-
-        ### Supported language(s)
-
-        German (de), English (en), Italian (it), Portuguese (pt), Russian (ru)
-        """
-        supportedLanguages = ["de", "en", "it", "pt", "ru"]
-        description = "Negative or hateful comments targeting someone because of their identity."
-        isExperimental = False
-        def __repr__(self):
-            return "IDENTIFY_ATTACK"
-    IDENTIFY_ATTACK = IDENTIFY_ATTACK()
-    class INSULT:
-        """
-        ## INSULT
-        Insulting, inflammatory, or negative comment towards a person or a group of people.
-
-        ### Supported language(s)
-
-        German (de), English (en), Italian (it), Portuguese (pt), Russian (ru)
-        """
-        supportedLanguages = ["de", "en", "it", "pt", "ru"]
-        description = "Insulting, inflammatory, or negative comment towards a person or a group of people."
-        isExperimental = False
-        def __repr__(self):
-            return "INSULT"
-    INSULT = INSULT()
-    class PROFANITY:
-        """
-        ## PROFANITY
-        Swear words, curse words, or other obscene or profane language.
-
-        ### Supported language(s)
-
-        German (de), English (en), Italian (it), Portuguese (pt), Russian (ru)
-        """
-        supportedLanguages = ["de", "en", "it", "pt", "ru"]
-        description = "Swear words, curse words, or other obscene or profane language."
-        isExperimental = False
-        def __repr__(self):
-            return "PROFANITY"
-    PROFANITY = PROFANITY()
-    class THREAT:
-        """
-        ## THREAT
-        Describes an intention to inflict pain, injury, or violence against an individual or group.
-
-        ### Supported language(s)
-
-        German (de), English (en), Italian (it), Portuguese (pt), Russian (ru)
-        """
-        supportedLanguages = ["de", "en", "it", "pt", "ru"]
-        description = "Describes an intention to inflict pain, injury, or violence against an individual or group."
-        isExperimental = False
-        def __repr__(self):
-            return "THREAT"
-    THREAT = THREAT()
-
-    # Experimental attributes
-    class TOXICITY_EXPERIMENTAL:
-        """
-        ## TOXICITY_EXPERIMENTAL
-        A rude, disrespectful, or unreasonable comment that is likely to make people leave a discussion.
-
-        ### Important notes on using experimental attributes:
-
-         - Once experimental attributes are deprecated and production attributes are created, the experimental attribute will stop working. When that happens, you will need to update the API call's attribute name to the new production attribute name.
-        
-         - Expect language availability to change over time as we test attribute performance and move attributes to production.
-
-        """
-        description = "A rude, disrespectful, or unreasonable comment that is likely to make people leave a discussion."
-        isExperimental = True
-        def __repr__(self):
-            return "TOXICITY_EXPERIMENTAL"
-    TOXICITY_EXPERIMENTAL = TOXICITY_EXPERIMENTAL()
-    class SEVERE_TOXICITY_EXPERIMENTAL:
-        """
-        ## SEVERE_TOXICITY_EXPERIMENTAL
-        A very hateful, aggressive, disrespectful comment or otherwise very likely to make a user leave
-        a discussion or give up on sharing their perspective. This attribute is much less sensitive to
-        more mild forms of toxicity, such as comments that include positive uses of curse words.
-
-        ### Important notes on using experimental attributes:
-
-         - Once experimental attributes are deprecated and production attributes are created, the experimental attribute will stop working. When that happens, you will need to update the API call's attribute name to the new production attribute name.
-        
-         - Expect language availability to change over time as we test attribute performance and move attributes to production.
-
-        """
-        description = "A very hateful, aggressive, disrespectful comment or otherwise very likely to make a user leave a discussion or give up on sharing their perspective. This attribute is much less sensitive to more mild forms of toxicity, such as comments that include positive uses of curse words."
-        isExperimental = True
-        def __repr__(self):
-            return "SEVERE_TOXICITY_EXPERIMENTAL"
-    SEVERE_TOXICITY_EXPERIMENTAL = SEVERE_TOXICITY_EXPERIMENTAL()
-    class IDENTIFY_ATTACK_EXPERIMENTAL:
-        """
-        ## IDENTIFY_ATTACK_EXPERIMENTAL
-        Negative or hateful comments targeting someone because of their identity.
-
-        ### Important notes on using experimental attributes:
-
-         - Once experimental attributes are deprecated and production attributes are created, the experimental attribute will stop working. When that happens, you will need to update the API call's attribute name to the new production attribute name.
-        
-         - Expect language availability to change over time as we test attribute performance and move attributes to production.
-
-        """
-        description = "Negative or hateful comments targeting someone because of their identity."
-        isExperimental = True
-        def __repr__(self):
-            return "IDENTIFY_ATTACK_EXPERIMENTAL"
-    IDENTIFY_ATTACK_EXPERIMENTAL = IDENTIFY_ATTACK_EXPERIMENTAL()
-    class INSULT_EXPERIMENTAL:
-        """
-        ## INSULT_EXPERIMENTAL
-        Insulting, inflammatory, or negative comment towards a person or a group of people.
-
-        ### Important notes on using experimental attributes:
-
-         - Once experimental attributes are deprecated and production attributes are created, the experimental attribute will stop working. When that happens, you will need to update the API call's attribute name to the new production attribute name.
-        
-         - Expect language availability to change over time as we test attribute performance and move attributes to production.
-
-        """
-        description = "Insulting, inflammatory, or negative comment towards a person or a group of people."
-        isExperimental = True
-        def __repr__(self):
-            return "INSULT_EXPERIMENTAL"
-    INSULT_EXPERIMENTAL = INSULT_EXPERIMENTAL()
-    class PROFANITY_EXPERIMENTAL:
-        """
-        ## PROFANITY_EXPERIMENTAL
-        Swear words, curse words, or other obscene or profane language.
-
-        ### Important notes on using experimental attributes:
-
-         - Once experimental attributes are deprecated and production attributes are created, the experimental attribute will stop working. When that happens, you will need to update the API call's attribute name to the new production attribute name.
-        
-         - Expect language availability to change over time as we test attribute performance and move attributes to production.
-
-        """
-        description = "Swear words, curse words, or other obscene or profane language."
-        isExperimental = True
-        def __repr__(self):
-            return "PROFANITY_EXPERIMENTAL"
-    PROFANITY_EXPERIMENTAL = PROFANITY_EXPERIMENTAL()
-    class THREAT_EXPERIMENTAL:
-        """
-        ## THREAT_EXPERIMENTAL
-        Describes an intention to inflict pain, injury, or violence against an individual or group.
-
-        ### Important notes on using experimental attributes:
-
-         - Once experimental attributes are deprecated and production attributes are created, the experimental attribute will stop working. When that happens, you will need to update the API call's attribute name to the new production attribute name.
-        
-         - Expect language availability to change over time as we test attribute performance and move attributes to production.
-
-        """
-        description = "Describes an intention to inflict pain, injury, or violence against an individual or group."
-        isExperimental = True
-        def __repr__(self):
-            return "THREAT_EXPERIMENTAL"
-    THREAT_EXPERIMENTAL = THREAT_EXPERIMENTAL()
-    class SEXUALLY_EXPLICIT:
-        """
-        ## SEXUALLY_EXPLICIT
-        Contains references to sexual acts, body parts, or other lewd content.
-
-        ### Important notes on using experimental attributes:
-
-         - Once experimental attributes are deprecated and production attributes are created, the experimental attribute will stop working. When that happens, you will need to update the API call's attribute name to the new production attribute name.
-        
-         - Expect language availability to change over time as we test attribute performance and move attributes to production.
-
-        """
-        description = "Contains references to sexual acts, body parts, or other lewd content."
-        isExperimental = True
-        def __repr__(self):
-            return "SEXUALLY_EXPLICIT"
-    SEXUALLY_EXPLICIT = SEXUALLY_EXPLICIT()
-    class FLIRTATION:
-        """
-        ## FLIRTATION
-        Pickup lines, complimenting appearance, subtle sexual innuendos, etc.
-
-        ### Important notes on using experimental attributes:
-
-         - Once experimental attributes are deprecated and production attributes are created, the experimental attribute will stop working. When that happens, you will need to update the API call's attribute name to the new production attribute name.
-        
-         - Expect language availability to change over time as we test attribute performance and move attributes to production.
-
-        """
-        description = "Pickup lines, complimenting appearance, subtle sexual innuendos, etc."
-        isExperimental = True
-        def __repr__(self):
-            return "FLIRTATION"
-    FLIRTATION = FLIRTATION()
-    
-    # New York Times attributes
-    class ATTACK_ON_AUTHOR:
-        """
-        ## ATTACK_ON_AUTHOR
-        Attack on the author of an article or post.
-
-        ### Supported language(s)
-
-        English (en)
-        """
-        supportedLanguages = ["en"]
-        description = "Attack on the author of an article or post."
-        isExperimental = True
-        def __repr__(self):
-            return "ATTACK_ON_AUTHOR"
-    ATTACK_ON_AUTHOR = ATTACK_ON_AUTHOR()
-    class ATTACK_ON_COMMENTER:
-        """
-        ## ATTACK_ON_COMMENTER
-        Attack on fellow commenter.
-
-        ### Supported language(s)
-
-        English (en)
-        """
-        supportedLanguages = ["en"]
-        description = "Attack on fellow commenter."
-        isExperimental = True
-        def __repr__(self):
-            return "ATTACK_ON_COMMENTER"
-    ATTACK_ON_COMMENTER = ATTACK_ON_COMMENTER()
-    class INCOHERENT:
-        """
-        ## INCOHERENT
-        Difficult to understand, nonsensical.
-
-        ### Supported language(s)
-
-        English (en)
-        """
-        supportedLanguages = ["en"]
-        description = "Difficult to understand, nonsensical."
-        isExperimental = True
-        def __repr__(self):
-            return "INCOHERENT"
-    INCOHERENT = INCOHERENT()
-    class INFLAMMATORY:
-        """
-        ## INFLAMMATORY
-        Intending to provoke or inflame.
-
-        ### Supported language(s)
-
-        English (en)
-        """
-        supportedLanguages = ["en"]
-        description = "Intending to provoke or inflame."
-        isExperimental = True
-        def __repr__(self):
-            return "INFLAMMATORY"
-    INFLAMMATORY = INFLAMMATORY()
-    class LIKELY_TO_REJECT:
-        """
-        ## LIKELY_TO_REJECT
-        Overall measure of the likelihood for the comment to be rejected according to the NYT's moderation.
-
-        ### Supported language(s)
-
-        English (en)
-        """
-        supportedLanguages = ["en"]
-        description = "Overall measure of the likelihood for the comment to be rejected according to the NYT's moderation."
-        isExperimental = True
-        def __repr__(self):
-            return "LIKELY_TO_REJECT"
-    LIKELY_TO_REJECT = LIKELY_TO_REJECT()
-    class OBSCENE:
-        """
-        ## OBSCENE
-        Obscene or vulgar language such as cursing.
-
-        ### Supported language(s)
-
-        English (en)
-        """
-        supportedLanguages = ["en"]
-        description = "Obscene or vulgar language such as cursing."
-        isExperimental = True
-        def __repr__(self):
-            return "OBSCENE"
-    OBSCENE = OBSCENE()
-    class SPAM:
-        """
-        ## SPAM
-        Irrelevant and unsolicited commercial content.
-
-        ### Supported language(s)
-
-        English (en)
-        """
-        supportedLanguages = ["en"]
-        description = "Irrelevant and unsolicited commercial content."
-        isExperimental = True
-        def __repr__(self):
-            return "SPAM"
-    SPAM = SPAM()
-    class UNSUBSTANTIAL:
-        """
-        ## UNSUBSTANTIAL
-        Trivial or short comments.
-
-        ### Supported language(s)
-
-        English (en)
-        """
-        supportedLanguages = ["en"]
-        description = "Trivial or short comments."
-        isExperimental = True
-        def __repr__(self):
-            return "UNSUBSTANTIAL"
-    UNSUBSTANTIAL = UNSUBSTANTIAL()
 
 class Client:
     def __init__(self, token: str):
@@ -463,11 +106,11 @@ class Client:
     @staticmethod
     def __get_attribute(attribute: str) -> Optional[str]:
         try:
-            return difflib.get_close_matches(attribute, ["TOXICITY", "SEVERE_TOXICITY", "IDENTIFY_ATTACK", "INSULT", "PROFANITY", "THREAT_EXPERIMENTAL", "TOXICITY_EXPERIMENTAL", "SEVERE_TOXICITY_EXPERIMENTAL", "IDENTIFY_ATTACK_EXPERIMENTAL", "INSULT_EXPERIMENTAL", "PROFANITY_EXPERIMENTAL", "THREAT_EXPERIMENTAL", "SEXUALLY_EXPLICIT", "FLIRTATION", "ATTACK_ON_AUTHOR", "ATTACK_ON_COMMENTER", "INCOHERENT", "INFLAMMATORY", "LIKELY_TO_REJECT", "OBSCENE", "SPAM", "UNSUBSTANTIAL"], n=1)[0]
+            return difflib.get_close_matches(attribute, ["TOXICITY", "SEVERE_TOXICITY", "IDENTITY_ATTACK", "INSULT", "PROFANITY", "THREAT_EXPERIMENTAL", "TOXICITY_EXPERIMENTAL", "SEVERE_TOXICITY_EXPERIMENTAL", "IDENTITY_ATTACK_EXPERIMENTAL", "INSULT_EXPERIMENTAL", "PROFANITY_EXPERIMENTAL", "THREAT_EXPERIMENTAL", "SEXUALLY_EXPLICIT", "FLIRTATION", "ATTACK_ON_AUTHOR", "ATTACK_ON_COMMENTER", "INCOHERENT", "INFLAMMATORY", "LIKELY_TO_REJECT", "OBSCENE", "SPAM", "UNSUBSTANTIAL"], n=1)[0]
         except IndexError:
             return None
 
-    def analyze(self, text: str, requestedAttributes: list[str], language: Optional[str] = None) -> dict:
+    def analyze(self, text: str, attributes: list[str] = Attributes.Production, language: Optional[str] = None, **options) -> dict:
         """
         Make a request to the Perspective API with the text and requested attributes that you've entered.
 
@@ -479,26 +122,58 @@ class Client:
             A list of attributes to analyze the text for.
         language: :class:`Optional[str]`
             The language of text. If `None`, language will be automatically detected.
+        \*\*options
+            skip_on_lang: :class:`bool`
+                Whether to skip the attribute if the attribute does not support the text's language, or raise an `UnsupportedLanguageError` exception. Default is `False`.
+            skip_on_unknown: :class:`bool`
+                Whether to skip the attribute if it's invalid/unknown. Default is `False`.
 
         Returns
         --------
-        :class:`dict`
-            A dictionary containing percents of every attribute requested.
+        :class:`dict`: A dictionary containing percents of every attribute requested.
         """
+        try:
+            for _ in attributes:
+                pass
+        except TypeError:
+            if type(attributes) is not list:
+                if type(attributes) is not str:
+                    attributes = repr(attributes)
+                attr_pass = 0
+                for i in range(len(attributes.split("\",\""))):
+                    if attributes.split("\",\"")[i] in ["TOXICITY", "SEVERE_TOXICITY", "IDENTITY_ATTACK", "INSULT", "PROFANITY", "THREAT", "TOXICITY_EXPERIMENTAL", "SEVERE_TOXICITY_EXPERIMENTAL", "IDENTITY_ATTACK_EXPERIMENTAL", "INSULT_EXPERIMENTAL", "PROFANITY_EXPERIMENTAL", "THREAT_EXPERIMENTAL", "SEXUALLY_EXPLICIT", "FLIRTATION", "ATTACK_ON_AUTHOR", "ATTACK_ON_COMMENTER", "INCOHERENT", "INFLAMMATORY", "LIKELY_TO_REJECT", "OBSCENE", "SPAM", "UNSUBSTANTIAL"]:
+                        attr_pass += 1
+                if attr_pass == len(attributes.split("\",\"")):
+                    attributes = attributes.split("\",\"")
+                else:
+                    raise UnknownAttributeError("Attribute \"{}\" is unknown.".format(f'{attributes=}'.split('=')[1].replace('\'','')))
+        attributes = list(attributes)
         if text.replace(" ", "") == "":
             raise EmptyTextError("The text cannot be empty.")
 
-        for attribute in requestedAttributes:
-            if f'{attribute=}'.split('=')[1].replace('\'','').upper() in ["TOXICITY", "SEVERE_TOXICITY", "IDENTIFY_ATTACK", "INSULT", "PROFANITY", "THREAT_EXPERIMENTAL", "TOXICITY_EXPERIMENTAL", "SEVERE_TOXICITY_EXPERIMENTAL", "IDENTIFY_ATTACK_EXPERIMENTAL", "INSULT_EXPERIMENTAL", "PROFANITY_EXPERIMENTAL", "THREAT_EXPERIMENTAL", "SEXUALLY_EXPLICIT", "FLIRTATION", "ATTACK_ON_AUTHOR", "ATTACK_ON_COMMENTER", "INCOHERENT", "INFLAMMATORY", "LIKELY_TO_REJECT", "OBSCENE", "SPAM", "UNSUBSTANTIAL"]:
-                requestedAttributes[requestedAttributes.index(attribute)] = f'{attribute=}'.split('=')[1].replace('\'','').upper()
+        for attribute in attributes:
+            if f'{attribute=}'.split('=')[1].replace('\'','').upper() in ["TOXICITY", "SEVERE_TOXICITY", "IDENTITY_ATTACK", "INSULT", "PROFANITY", "THREAT", "TOXICITY_EXPERIMENTAL", "SEVERE_TOXICITY_EXPERIMENTAL", "IDENTITY_ATTACK_EXPERIMENTAL", "INSULT_EXPERIMENTAL", "PROFANITY_EXPERIMENTAL", "THREAT_EXPERIMENTAL", "SEXUALLY_EXPLICIT", "FLIRTATION", "ATTACK_ON_AUTHOR", "ATTACK_ON_COMMENTER", "INCOHERENT", "INFLAMMATORY", "LIKELY_TO_REJECT", "OBSCENE", "SPAM", "UNSUBSTANTIAL"]:
+                attributes[attributes.index(attribute)] = f'{attribute=}'.split('=')[1].replace('\'','').upper()
             else:
                 if not self.__get_attribute(f'{attribute=}'.split('=')[1].replace('\'','').upper()):
-                    raise UnknownAttributeError("Attribute \"{}\" is unknown.".format(f'{attribute=}'.split('=')[1].replace('\'','')))
+                    if attributes in [[Attributes.All], [Attributes.Production], [Attributes.Experimental], [Attributes.NewYorkTimes]]:
+                        return self.analyze(text=text, attributes=attributes[0], language=language, **options)
+                    if "skip_on_lang" in options and options["skip_on_lang"]:
+                        del attributes[attributes.index(attribute)]
+                        continue
+                    else:
+                        raise UnknownAttributeError("Attribute \"{}\" is unknown.".format(f'{attribute=}'.split('=')[1].replace('\'','')))
                 else:
-                    requestedAttributes[requestedAttributes.index(attribute)] = self.__get_attribute(f'{attribute=}'.split('=')[1].replace('\'','').upper())
+                    attributes[attributes.index(attribute)] = self.__get_attribute(f'{attribute=}'.split('=')[1].replace('\'','').upper())
+                    if not attributes[attributes.index(attribute)]:
+                        if "skip_on_unknown" in options and options["skip_on_unknown"]:
+                            del attributes[attributes.index(attribute)]
+                            continue
+                        else:
+                            raise UnknownAttributeError("Attribute \"{}\" is unknown.".format(f'{attribute=}'.split('=')[1].replace('\'','')))
 
         requestedAttributes_dict = {}
-        for attribute in requestedAttributes:
+        for attribute in attributes:
             requestedAttributes_dict[str(attribute)] = {}
         
         if not language:
@@ -513,18 +188,32 @@ class Client:
                 'requestedAttributes': requestedAttributes_dict,
                 'languages': [language]
             }
-        try:
-            response = self.client.comments().analyze(body=analyze_request).execute()
-        except errors.HttpError as exceptionDetails:
-            if "does not support request languages" in str(exceptionDetails):
-                attribute = str(exceptionDetails).replace(f"<HttpError 400 when requesting https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key={self.__token}&alt=json returned \"Attribute ", "").split()[0]
-                language = str(exceptionDetails)[str(exceptionDetails).find(attribute):].replace(attribute, "").replace(" does not support request languages: ", "").split("\"")[0]
-                raise UnsupportedLanguageError(f"{self.__get_language_name(language=language)} ({self.__get_language_code(language=language)}) is not supported by \"{attribute}\" attribute.")
-            else:
-                raise HTTPException("An unknown error occured. Please try again. Exception details: " + str(exceptionDetails))
+        if "skip_on_lang" in options and options["skip_on_lang"]:
+            for _ in range(len(requestedAttributes_dict)):
+                try:
+                    response = self.client.comments().analyze(body=analyze_request).execute()
+                except errors.HttpError as exceptionDetails:
+                    if "does not support request languages" in str(exceptionDetails):
+                        attribute = str(exceptionDetails).replace(f"<HttpError 400 when requesting https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key={self.__token}&alt=json returned \"Attribute ", "").split()[0]
+                        del analyze_request["requestedAttributes"][str(attribute)]
+                        continue
+                    else:
+                        raise HTTPException("An unknown error occured. Please try again. Exception details: " + str(exceptionDetails))
+                else:
+                    break
+        else:
+            try:
+                response = self.client.comments().analyze(body=analyze_request).execute()
+            except errors.HttpError as exceptionDetails:
+                if "does not support request languages" in str(exceptionDetails):
+                    attribute = str(exceptionDetails).replace(f"<HttpError 400 when requesting https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key={self.__token}&alt=json returned \"Attribute ", "").split()[0]
+                    language = str(exceptionDetails)[str(exceptionDetails).find(attribute):].replace(attribute, "").replace(" does not support request languages: ", "").split("\"")[0]
+                    raise UnsupportedLanguageError(f"{self.__get_language_name(language=language)} ({self.__get_language_code(language=language)}) is not supported by \"{attribute}\" attribute.")
+                else:
+                    raise HTTPException("An unknown error occured. Please try again. Exception details: " + str(exceptionDetails))
         result = {}
 
-        for attribute in requestedAttributes:
+        for attribute in analyze_request["requestedAttributes"].keys():
             result[str(attribute)] = float(response['attributeScores'][str(attribute)]['spanScores'][0]['score']['value'])*100
 
         return result

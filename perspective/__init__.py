@@ -13,4 +13,6 @@ __version__ = "0.1.1"
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from .main import Client, Attributes
+from .main import Client
+from .attributes import Attributes
+from .utils import Utils as utils
