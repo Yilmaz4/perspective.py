@@ -1,10 +1,13 @@
 from setuptools import find_packages, setup
 
+with open("README.md", encoding="utf-8", mode="r") as file:
+    long_desc = file.read()
 setup(
     name='perspective.py',
     packages=find_packages(include=['perspective']),
     version='0.1.1',
     description='An easy-to-use API wrapper for Perspective API written in Python.',
+    long_description=long_desc,
     author='Yilmaz04',
     author_email="ymzymz2007@gmail.com",
     license='MIT',
@@ -25,5 +28,6 @@ setup(
         'Programming Language :: Python :: 3.10',
     ],
     download_url="https://github.com/Yilmaz4/perspective.py/archive/refs/tags/v0.1.0.tar.gz",
-    keywords=["perspective-api", "api-wrapper", "python", "api"]
+    keywords=["perspective-api", "api-wrapper", "python", "api"],
+    long_description_content_type='text/markdown'
 )
