@@ -10,6 +10,11 @@ Download & install git from https://git-scm.com/ and run below command:
 python -m pip install --upgrade git+https://github.com/Yilmaz4/perspective.py.git
 ```
 
+Or alternatively, you can install from PyPI (Python Package Index):
+```powershell
+pyhton -m pip install --upgrade perspective.py
+```
+
 ## Getting an API key
 
 You need to get an API key from Google to use Perspective API. Instructions are explained in [this article](https://developers.perspectiveapi.com/s/docs-get-started).
