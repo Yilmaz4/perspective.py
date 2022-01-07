@@ -36,7 +36,7 @@ You can find a list of all attributes and languages each attribute supports in [
 ## Example usage
 
 ```python
-from perspective import Client, Attributes
+from perspective import Client, Attributes, utils
 
 # Creating the Client object with the API key
 API_KEY = "your_api_key"
@@ -51,9 +51,16 @@ print(response)
 # Print the percent of TOXICITY attribute
 print(response["TOXICITY"]
 
+print("\n")
+
 # Iterate over the response
 for attribute, result in response.items():
     print(attribute.capitalize() + ": " + "%.2f" % result + "%")
+
+print("\n")
+
+# Or, use utils.format_response to print a formatted text of the response
+print(utils.format_response(response, align_right=True))
 ```
 
 ### Output
@@ -61,8 +68,33 @@ for attribute, result in response.items():
 ```python
 {'TOXICITY': 7.019685000000001, 'INSULT': 3.9963423999999996}
 7.019685000000001
+
 Toxicity: 7.02%
 Insult: 4.00%
+
+Toxicity: 7.02%
+  Insult: 4.00%
 ```
 
 As you can see in the output, `Client.analyze` returns a dictionary with requested attributes and their analysis results as percents. You can get percents of each attribute, or iterate over dictionary.
+
+## Example usage for creating a graph
+```python
+from perspective import Client, Attributes, utils
+
+# Creating the Client object with the API key
+API_KEY = "your_api_key"
+client = Client(token = API_KEY)
+
+# Make a request to Perspective API with a text to analyze and requested attributes
+response = client.analyze(text = "Hey! How are you?", requestedAttributes = Attributes.Production) # Attributes.Production includes all production-ready attributes
+
+# Create a graph and show it by popping up a window
+utils.show_graph(response=response, title="Sample graph")
+
+# Or alternatively, you can save the graph
+utils.save_graph(response=response, filename="graph.png", title="Sample graph")
+```
+
+### Output
+![image](https://user-images.githubusercontent.com/77583632/148606000-d21cb4b7-566c-45dd-9215-4248d831a62c.png)
