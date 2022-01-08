@@ -51,13 +51,13 @@ print(response)
 # Print the percent of TOXICITY attribute
 print(response["TOXICITY"]
 
-print("\n")
+print("  ")
 
 # Iterate over the response
 for attribute, result in response.items():
     print(attribute.capitalize() + ": " + "%.2f" % result + "%")
 
-print("\n")
+print("  ")
 
 # Or, use utils.format_response to print a formatted text of the response
 print(utils.format_response(response, align_right=True))
