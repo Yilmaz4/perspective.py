@@ -1,9 +1,36 @@
-from typing import Optional
+"""
+Copyright (c) 2021-2022 Yilmaz Alpaslan
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
+from typing import Optional, Literal
 import matplotlib.pyplot as plt
+import matplotlib
+
+from .errors import *
+
+matplotlib.set_loglevel("CRITICAL")
 
 class Utils:
     @staticmethod
-    def format_response(response: dict, align_right: bool = False) -> str:
+    def format_response(response: dict, align_right: bool = False, sort_by: Optional[Literal["ascending", "descending"]] = None) -> str:
         """
         Format the dictionary that the `analyze` function returned to a text which is easily readable by a human. The score values of attributes' digit count after the decimal will be decreased to 2 and the attribute names will be in lowercase. As an example, formatted text looks like the below text:
         
@@ -21,12 +48,18 @@ class Utils:
         response: :class:`dict`
             The dictionary that the `analyze` function returned.
         align_right: :class:`bool`
-            Whether the attribute names should be aligned to right or not. `False` by default.
+            Whether the attribute names should be aligned to right or not. Default is `False`.
+        sort_by: :class:`Optional[Literal["ascending", "descending"]]`
+            Whether sort the attributes ascending or descending according to their score values. If `None`, attributes will not be sorted. Default is `None`.
 
         Returns
         --------
         :class:`str`: The formatted text.
         """
+        if not not sort_by:
+            response = {k: v for k, v in sorted(response.items(), reverse=True if sort_by == "descending" else False, key=lambda item: item[1])}
+        if response == {}:
+            raise EmptyResponse("The response provided is an empty dictionary. Please make sure you're specifying the correct dictionary.")
         return_var = str()
         max_char = len(max(response, key=len))
         for attribute, result in response.items():
@@ -87,8 +120,16 @@ class Utils:
         grid_lines: :class:`bool`
             Whether the chart should have grid lines or not. Default is `True`
         **kwargs
-            Other keyword arguments that belong to `matplotlib.pyplot.barh` function; such as `height`, `width` etc.
+            Other keyword arguments that belong to `matplotlib.pyplot.barh` function; such as `height`, `color` etc.
         """
+        if "attributeScores" in response:
+            response_new = {}
+
+            for attribute, value in response["attributeScores"].items():
+                response_new[str(attribute)] = float(value['spanScores'][0]['score']['value'])*100
+            response = response_new
+            del response_new
+
         response = {k: v for k, v in sorted(response.items(), key=lambda item: item[1])}
         keys, values = zip(*response.items())
         keys = list(keys)
@@ -122,13 +163,13 @@ class Utils:
 
         plt.xticks([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
     
-        if grid_lines:
+        if grid_lines == True:
             plt.grid(b = True, color ='grey', linestyle ='-', linewidth = 0.5, alpha = 0.2)
 
         plt.show()
 
     @staticmethod
-    def save_graph(response: dict, filename: str, title: Optional[str] = None, grid_lines: bool = False, **kwargs):
+    def save_graph(response: dict, filename: str = "chart.png", title: Optional[str] = None, grid_lines: bool = False, **kwargs):
         r"""
         Draws a bar chart/plot with the data that the `analyze` function returned and saves it as a *.png file with the specified filename to the specified directory, using the matplotlib library..
 
@@ -137,14 +178,22 @@ class Utils:
         response: :class:`dict`
             The dictionary that the `analyze` function returned.
         filename: :class:`str`
-            The path that you want the file to be saved, including the filename (such as `C:\path\to\my\file.png`)
+            The path that you want the file to be saved, including the filename (such as `C:\path\to\my\file.png`). Default is "chart.png" in the same directory script is running.
         title: :class:`Optional[str]`
             The title for the chart. Default is "Perspective API result".
         grid_lines: :class:`bool`
             Whether the chart should have grid lines or not. Default is `True`
         **kwargs
-            Other keyword arguments that belong to `matplotlib.pyplot.barh` function; such as `height`, `width` etc.
+            Other keyword arguments that belong to `matplotlib.pyplot.barh` function; such as `height`, `color` etc.
         """
+        if "attributeScores" in response:
+            response_new = {}
+
+            for attribute, value in response["attributeScores"].items():
+                response_new[str(attribute)] = float(value['spanScores'][0]['score']['value'])*100
+            response = response_new
+            del response_new
+
         response = {k: v for k, v in sorted(response.items(), key=lambda item: item[1])}
         keys, values = zip(*response.items())
         keys = list(keys)
