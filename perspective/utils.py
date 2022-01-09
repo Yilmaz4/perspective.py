@@ -56,6 +56,14 @@ class Utils:
         --------
         :class:`str`: The formatted text.
         """
+        if "attributeScores" in response:
+            response_new = {}
+
+            for attribute, value in response["attributeScores"].items():
+                response_new[str(attribute)] = float(value['spanScores'][0]['score']['value'])*100
+            response = response_new
+            del response_new
+
         if not not sort_by:
             response = {k: v for k, v in sorted(response.items(), reverse=True if sort_by == "descending" else False, key=lambda item: item[1])}
         if response == {}:
@@ -89,6 +97,14 @@ class Utils:
         --------
         :class:`Optional[str]`: The attribute with highest score value.
         """
+        if "attributeScores" in response:
+            response_new = {}
+
+            for attribute, value in response["attributeScores"].items():
+                response_new[str(attribute)] = float(value['spanScores'][0]['score']['value'])*100
+            response = response_new
+            del response_new
+
         return max(response, key=response.get)
     @staticmethod
     def get_lowest(response: dict) -> Optional[str]:
@@ -104,6 +120,14 @@ class Utils:
         --------
         :class:`Optional[str]`: The attribute with lowest score value.
         """
+        if "attributeScores" in response:
+            response_new = {}
+
+            for attribute, value in response["attributeScores"].items():
+                response_new[str(attribute)] = float(value['spanScores'][0]['score']['value'])*100
+            response = response_new
+            del response_new
+
         return min(response, key=response.get)
 
     @staticmethod
