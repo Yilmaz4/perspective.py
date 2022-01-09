@@ -11,7 +11,7 @@ setup(
     author='Yilmaz04',
     author_email="ymzymz2007@gmail.com",
     license='MIT',
-    install_requires=['google-api-python-client', 'pycountry', 'httplib2', 'typing', 'langdetect'],
+    install_requires=['google-api-python-client', 'pycountry', 'httplib2', 'typing'],
     url="https://github.com/Yilmaz4/perspective.py/",
     classifiers=[
         'Development Status :: 5 - Production/Stable',
