@@ -5,7 +5,7 @@ with open("README.md", encoding="utf-8", mode="r") as file:
 setup(
     name='perspective.py',
     packages=find_packages(include=['perspective']),
-    version='0.3.0',
+    version='0.3.1',
     description='An easy-to-use API wrapper for Perspective API written in Python.',
     long_description=long_desc,
     author='Yilmaz04',
