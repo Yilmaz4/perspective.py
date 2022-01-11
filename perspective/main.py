@@ -56,25 +56,11 @@ class Client:
                 try:
                     final_level = levels_inverted[logging_level]
                 except KeyError:
-                    logging.basicConfig(
-                        format='%(asctime)s [%(levelname)-0s] %(message)s',
-                        level=logging_level,
-                        datefmt='%Y-%m-%d %H:%M:%S'
-                    )
+                    logger.setLevel(level=logging_level)
                 else:
-                    logging.basicConfig(
-                        format='%(asctime)s [%(levelname)-0s] %(message)s',
-                        level=final_level,
-                        datefmt='%Y-%m-%d %H:%M:%S'
-                    )
+                    logger.setLevel(level=final_level)
             else:
-                logging.basicConfig(
-                    format='%(asctime)s [%(levelname)-0s] %(message)s',
-                    level=final_level,
-                    datefmt='%Y-%m-%d %H:%M:%S'
-                )
-            self.__logging_level = final_level
-            logger.disabled = False
+                logger.setLevel(level=final_level)
         else:
             logging.basicConfig(
                 format='%(asctime)s %(levelname)-8s %(message)s',
@@ -118,25 +104,15 @@ class Client:
                 try:
                     final_level = levels_inverted[level]
                 except KeyError:
-                    logging.basicConfig(
-                        format='%(asctime)s [%(levelname)-0s] %(message)s',
-                        level=level,
-                        datefmt='%Y-%m-%d %H:%M:%S'
-                    )
+                    logger.setLevel(level=level)
                 else:
-                    logging.basicConfig(
-                        format='%(asctime)s [%(levelname)-0s] %(message)s',
-                        level=final_level,
-                        datefmt='%Y-%m-%d %H:%M:%S'
-                    )
+                    logger.setLevel(level=final_level)
             else:
-                logging.basicConfig(
-                    format='%(asctime)s [%(levelname)-0s] %(message)s',
-                    level=final_level,
-                    datefmt='%Y-%m-%d %H:%M:%S'
-                )
-            self.__logging_level = final_level
+                logger.setLevel(level=final_level)
             logger.disabled = False
+        else:
+            logger.setLevel(level=logging.CRITICAL + 1)
+            logger.disabled = True
 
     def change_token(self, token: str):
         if not token == self.__token:
