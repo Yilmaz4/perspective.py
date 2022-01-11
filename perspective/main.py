@@ -47,6 +47,11 @@ class Client:
     def __init__(self, token: str, logging_level: Optional[Union[Literal["NOTSET", "DEBUG", "INFO", "WARN", "ERROR", "CRITICAL"], Literal[0, 10, 20, 30, 40, 50]]] = None):
         global logger
         logger = logging.getLogger(__name__)
+        logging.basicConfig(
+            format='%(asctime)s [%(levelname)s] %(message)s',
+            level=logging.WARNING,
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
         if not not logging:
             levels = {"NOTSET":logging.NOTSET, "DEBUG":logging.DEBUG, "INFO":logging.INFO, "WARN":logging.WARN, "ERROR":logging.ERROR, "CRITICAL":logging.CRITICAL}
             levels_inverted = {v: k for k, v in levels.items()}
@@ -62,11 +67,7 @@ class Client:
             else:
                 logger.setLevel(level=final_level)
         else:
-            logging.basicConfig(
-                format='%(asctime)s %(levelname)-8s %(message)s',
-                level=logging.CRITICAL + 1,
-                datefmt='%Y-%m-%d %H:%M:%S'
-            )
+            logger.setLevel(level=51)
             logger.disabled = True
         try:
             self.client = discovery.build(
@@ -91,10 +92,12 @@ class Client:
 
     @property
     def logging_level(self):
-        return self.__logging_level
+        global logger
+        return logger.level
 
     @logging_level.setter
     def logging_level(self, level: Optional[Union[Literal["NOTSET", "DEBUG", "INFO", "WARN", "ERROR", "CRITICAL"], Literal[0, 10, 20, 30, 40, 50]]] = None):
+        global logger
         if not not level:
             levels = {"NOTSET":logging.NOTSET, "DEBUG":logging.DEBUG, "INFO":logging.INFO, "WARN":logging.WARN, "ERROR":logging.ERROR, "CRITICAL":logging.CRITICAL}
             levels_inverted = {v: k for k, v in levels.items()}
