@@ -44,7 +44,7 @@ class Client:
         is_a_tty = hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
         return supported_platform and is_a_tty
 
-    def __init__(self, token: str, logging_level: Optional[Union[Literal["NOTSET", "DEBUG", "INFO", "WARN", "ERROR", "CRITICAL"], Literal[0, 10, 20, 30, 40, 50]]] = None):
+    def __init__(self, token: str, logging_level: Optional[Union[Literal["NOTSET", "DEBUG", "INFO", "WARN", "ERROR", "CRITICAL"], Literal[0, 10, 20, 30, 40, 50]]] = None) -> None:
         global logger
         logger = logging.getLogger(__name__)
         logging.basicConfig(
@@ -91,12 +91,12 @@ class Client:
             self.__token = token
 
     @property
-    def logging_level(self):
+    def logging_level(self) -> Union[int, str]:
         global logger
         return logger.level
 
     @logging_level.setter
-    def logging_level(self, level: Optional[Union[Literal["NOTSET", "DEBUG", "INFO", "WARN", "ERROR", "CRITICAL"], Literal[0, 10, 20, 30, 40, 50]]] = None):
+    def logging_level(self, level: Optional[Union[Literal["NOTSET", "DEBUG", "INFO", "WARN", "ERROR", "CRITICAL"], Literal[0, 10, 20, 30, 40, 50]]] = None) -> None:
         global logger
         if not not level:
             levels = {"NOTSET":logging.NOTSET, "DEBUG":logging.DEBUG, "INFO":logging.INFO, "WARN":logging.WARN, "ERROR":logging.ERROR, "CRITICAL":logging.CRITICAL}
@@ -117,7 +117,7 @@ class Client:
             logger.setLevel(level=logging.CRITICAL + 1)
             logger.disabled = True
 
-    def change_token(self, token: str):
+    def change_token(self, token: str) -> None:
         if not token == self.__token:
             try:
                 self.client = discovery.build(
