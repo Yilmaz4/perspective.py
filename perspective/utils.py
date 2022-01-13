@@ -21,8 +21,11 @@ SOFTWARE.
 """
 
 from typing import Optional, Literal
+
 import matplotlib.pyplot as plt
 import matplotlib
+import sqlite3 as sql
+import os
 
 from .errors import *
 
@@ -50,12 +53,17 @@ class Utils:
         align_right: :class:`bool`
             Whether the attribute names should be aligned to right or not. Default is `False`.
         sort_by: :class:`Optional[Literal["ascending", "descending"]]`
-            Whether sort the attributes ascending or descending according to their score values. If `None`, attributes will not be sorted. Default is `None`.
+            Whether to sort the attributes ascending or descending according to their score values. If `None`, attributes will not be sorted. Default is `None`.
 
         Returns
         --------
         :class:`str`: The formatted text.
         """
+        if response == {}:
+            raise EmptyResponse("The response provided is an empty dictionary. Please make sure you're specifying the correct dictionary.") from None
+        if not not sort_by:
+            response = {k: v for k, v in sorted(response.items(), reverse=True if sort_by == "descending" else False, key=lambda item: item[1])}
+
         if "attributeScores" in response:
             response_new = {}
 
@@ -64,21 +72,17 @@ class Utils:
             response = response_new
             del response_new
 
-        if not not sort_by:
-            response = {k: v for k, v in sorted(response.items(), reverse=True if sort_by == "descending" else False, key=lambda item: item[1])}
-        if response == {}:
-            raise EmptyResponse("The response provided is an empty dictionary. Please make sure you're specifying the correct dictionary.")
         return_var = str()
         max_char = len(max(response, key=len))
         for attribute, result in response.items():
             if list(response.items()).index((attribute, result)) == 0:
                 if align_right:
-                    return_var += " " * (max_char - len(attribute)) + attribute.replace("_"," ").title().replace("On","on").replace("To","to") + ": " + "%.2f" % result + "%"
+                    return_var += " " * (max_char - len(attribute)) + attribute.replace("_"," ").title().replace("On ","on ").replace("To ","to ") + ": " + "%.2f" % result + "%"
                 else:
                     return_var += attribute.replace("_"," ").title().replace("On ","on ").replace("To ","to ") + ": " + " " * (max_char - len(attribute)) + "%.2f" % result + "%"
                 continue
             if align_right:
-                return_var += "\n" + " " * (max_char - len(attribute)) + attribute.replace("_"," ").title().replace("On","on").replace("To","to") + ": " + "%.2f" % result + "%"
+                return_var += "\n" + " " * (max_char - len(attribute)) + attribute.replace("_"," ").title().replace("On ","on ").replace("To ","to ") + ": " + "%.2f" % result + "%"
             else:
                 return_var += "\n" + attribute.replace("_"," ").title().replace("On ","on ").replace("To ","to ") + ": " + " " * (max_char - len(attribute)) + "%.2f" % result + "%"
         return return_var
@@ -97,6 +101,9 @@ class Utils:
         --------
         :class:`Optional[str]`: The attribute with highest score value.
         """
+        if response == {}:
+            raise EmptyResponse("The response provided is an empty dictionary. Please make sure you're specifying the correct dictionary.") from None
+
         if "attributeScores" in response:
             response_new = {}
 
@@ -120,6 +127,9 @@ class Utils:
         --------
         :class:`Optional[str]`: The attribute with lowest score value.
         """
+        if response == {}:
+            raise EmptyResponse("The response provided is an empty dictionary. Please make sure you're specifying the correct dictionary.") from None
+
         if "attributeScores" in response:
             response_new = {}
 
@@ -146,6 +156,9 @@ class Utils:
         **kwargs
             Other keyword arguments that belong to `matplotlib.pyplot.barh` function; such as `height`, `color` etc.
         """
+        if response == {}:
+            raise EmptyResponse("The response provided is an empty dictionary. Please make sure you're specifying the correct dictionary.") from None
+
         if "attributeScores" in response:
             response_new = {}
 
@@ -210,6 +223,11 @@ class Utils:
         **kwargs
             Other keyword arguments that belong to `matplotlib.pyplot.barh` function; such as `height`, `color` etc.
         """
+        if filename.replace(" ","") == "":
+            raise EmptyFileName("The filename cannot be an empty string.") from None
+        if response == {}:
+            raise EmptyResponse("The response provided is an empty dictionary. Please make sure you're specifying the correct dictionary.") from None
+
         if "attributeScores" in response:
             response_new = {}
 
@@ -256,3 +274,44 @@ class Utils:
             plt.grid(b = True, color ='grey', linestyle ='-', linewidth = 0.5, alpha = 0.2)
 
         plt.savefig(filename, bbox_inches='tight')
+
+    @staticmethod
+    def save_data(response: dict, filename: str = "data.sqlite3", sort_by: Optional[Literal["ascending", "descending"]] = None, tablename: str = "response"):
+        """
+        Saves the data that the `analyze` function returned to a SQLite3 database.
+
+        Parameters
+        -----------
+        response: :class:`dict`
+            The dictionary that the `analyze` function returned.
+        filename: :class:`str`
+            The path that you want the database to be saved, including the filename (such as `C:\path\to\my\database.sqlite3`). Default is "data.sqlite3" in the same directory script is running.
+        sort_by: :class:`bool`
+            Whether to sort the attributes ascending or descending according to their score values. If `None`, attributes will not be sorted. Default is `None`.
+        tablename: :class:`str`
+            The name of the table to be created in the database file. Default is `response`.
+        """
+        if not not sort_by:
+            response = {k: v for k, v in sorted(response.items(), reverse=True if sort_by == "descending" else False, key=lambda item: item[1])}
+        if response == {}:
+            raise EmptyResponse("The response provided is an empty dictionary. Please make sure you're specifying the correct dictionary.") from None
+        if filename.replace(" ","") == "":
+            raise EmptyFileName("The filename cannot be an empty string.") from None
+        if tablename.replace(" ","") == "":
+            raise EmptyTableName("The tablename cannot be an empty string.") from None
+
+        if "attributeScores" in response:
+            response_new = {}
+
+            for attribute, value in response["attributeScores"].items():
+                response_new[str(attribute)] = float(value['spanScores'][0]['score']['value'])*100
+            response = response_new
+            del response_new
+
+        if os.path.exists(filename):
+            os.remove(filename)
+        con = sql.connect(filename)
+        cursor = con.cursor()
+        cursor.execute(f"CREATE TABLE IF NOT EXISTS {tablename} (timestamp, id, role_id)")
+        cursor.execute(f"SELECT * FROM response")
+        index = cursor.fetchall()
