@@ -3,4 +3,4 @@ Thanks in advance for investing your time to contribute to this project! This is
 
 I'm currently looking forward for updates on Perspective API, such as the context thing and some new attributes. I still haven't fully understood the capabilities of Perspective API; so if you've, it would be great if you share it with me! As far as I know, you can currently only get score values for text. And if I didn't make a mistake in the code, experimental versions of production-ready attributes do NOT support any languages. Please correct me if I'm wrong.
 
-That's all I can say about contributing to this project. I hope you liked this project and would like to improve it more :).
+That's all I can say about contributing to this project. I hope you liked this project and would like to improve it more.
