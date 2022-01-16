@@ -61,16 +61,17 @@ class Utils:
         """
         if response == {}:
             raise EmptyResponse("The response provided is an empty dictionary. Please make sure you're specifying the correct dictionary.") from None
-        if not not sort_by:
-            response = {k: v for k, v in sorted(response.items(), reverse=True if sort_by == "descending" else False, key=lambda item: item[1])}
 
-        if "attributeScores" in response:
+        if "attributeScores" in response.keys():
             response_new = {}
 
-            for attribute, value in response["attributeScores"].items():
-                response_new[str(attribute)] = float(value['spanScores'][0]['score']['value'])*100
+            for attribute in response["attributeScores"].keys():
+                response_new[str(attribute)] = float(response['attributeScores'][str(attribute)]['summaryScore']['value']) * 100
             response = response_new
             del response_new
+
+        if not not sort_by:
+            response = {k: v for k, v in sorted(response.items(), reverse=True if sort_by == "descending" else False if sort_by == "ascending" else None, key=lambda item: item[1])}
 
         return_var = str()
         max_char = len(max(response, key=len))
@@ -104,11 +105,11 @@ class Utils:
         if response == {}:
             raise EmptyResponse("The response provided is an empty dictionary. Please make sure you're specifying the correct dictionary.") from None
 
-        if "attributeScores" in response:
+        if "attributeScores" in response.keys():
             response_new = {}
 
-            for attribute, value in response["attributeScores"].items():
-                response_new[str(attribute)] = float(value['spanScores'][0]['score']['value'])*100
+            for attribute in response["attributeScores"].keys():
+                response_new[str(attribute)] = float(response['attributeScores'][str(attribute)]['summaryScore']['value']) * 100
             response = response_new
             del response_new
 
@@ -130,11 +131,11 @@ class Utils:
         if response == {}:
             raise EmptyResponse("The response provided is an empty dictionary. Please make sure you're specifying the correct dictionary.") from None
 
-        if "attributeScores" in response:
+        if "attributeScores" in response.keys():
             response_new = {}
 
-            for attribute, value in response["attributeScores"].items():
-                response_new[str(attribute)] = float(value['spanScores'][0]['score']['value'])*100
+            for attribute in response["attributeScores"].keys():
+                response_new[str(attribute)] = float(response['attributeScores'][str(attribute)]['summaryScore']['value']) * 100
             response = response_new
             del response_new
 
@@ -159,11 +160,11 @@ class Utils:
         if response == {}:
             raise EmptyResponse("The response provided is an empty dictionary. Please make sure you're specifying the correct dictionary.") from None
 
-        if "attributeScores" in response:
+        if "attributeScores" in response.keys():
             response_new = {}
 
-            for attribute, value in response["attributeScores"].items():
-                response_new[str(attribute)] = float(value['spanScores'][0]['score']['value'])*100
+            for attribute in response["attributeScores"].keys():
+                response_new[str(attribute)] = float(response['attributeScores'][str(attribute)]['summaryScore']['value']) * 100
             response = response_new
             del response_new
 
@@ -228,11 +229,11 @@ class Utils:
         if response == {}:
             raise EmptyResponse("The response provided is an empty dictionary. Please make sure you're specifying the correct dictionary.") from None
 
-        if "attributeScores" in response:
+        if "attributeScores" in response.keys():
             response_new = {}
 
-            for attribute, value in response["attributeScores"].items():
-                response_new[str(attribute)] = float(value['spanScores'][0]['score']['value'])*100
+            for attribute in response["attributeScores"].keys():
+                response_new[str(attribute)] = float(response['attributeScores'][str(attribute)]['summaryScore']['value']) * 100
             response = response_new
             del response_new
 
@@ -276,7 +277,7 @@ class Utils:
         plt.savefig(filename, bbox_inches='tight')
 
     @staticmethod
-    def save_data(response: dict, filename: str = "data.sqlite3", sort_by: Optional[Literal["ascending", "descending"]] = None, tablename: str = "response"):
+    def save_data(response: dict, filename: str = "data.sqlite3", sort_by: Optional[Literal["ascending", "descending"]] = None, tablename: str = "response") -> None:
         """
         Saves the data that the `analyze` function returned to a SQLite3 database.
 
@@ -291,8 +292,6 @@ class Utils:
         tablename: :class:`str`
             The name of the table to be created in the database file. Default is `response`.
         """
-        if not not sort_by:
-            response = {k: v for k, v in sorted(response.items(), reverse=True if sort_by == "descending" else False, key=lambda item: item[1])}
         if response == {}:
             raise EmptyResponse("The response provided is an empty dictionary. Please make sure you're specifying the correct dictionary.") from None
         if filename.replace(" ","") == "":
@@ -300,18 +299,26 @@ class Utils:
         if tablename.replace(" ","") == "":
             raise EmptyTableName("The tablename cannot be an empty string.") from None
 
-        if "attributeScores" in response:
+        if "attributeScores" in response.keys():
             response_new = {}
 
-            for attribute, value in response["attributeScores"].items():
-                response_new[str(attribute)] = float(value['spanScores'][0]['score']['value'])*100
+            for attribute in response["attributeScores"].keys():
+                response_new[str(attribute)] = float(response['attributeScores'][str(attribute)]['summaryScore']['value']) * 100
             response = response_new
             del response_new
+        
+        if not not sort_by:
+            response = {k: v for k, v in sorted(response.items(), reverse=True if sort_by == "descending" else False, key=lambda item: item[1])}
 
         if os.path.exists(filename):
             os.remove(filename)
         con = sql.connect(filename)
         cursor = con.cursor()
-        cursor.execute(f"CREATE TABLE IF NOT EXISTS {tablename} (timestamp, id, role_id)")
+        cursor.execute(f"CREATE TABLE IF NOT EXISTS {tablename} (attribute, value)")
         cursor.execute(f"SELECT * FROM response")
-        index = cursor.fetchall()
+        
+        for attribute, value in response.items():
+            cursor.execute(f"INSERT INTO {tablename} VALUES ('{attribute.upper()}', {value})")
+
+        con.commit()
+        con.close()
