@@ -318,7 +318,7 @@ class Client:
         result = {}
 
         for attribute in analyze_request["requestedAttributes"].keys():
-            result[str(attribute)] = float(response['attributeScores'][str(attribute)]['spanScores'][0]['score']['value'])*100
+            result[str(attribute)] = float(response['attributeScores'][str(attribute)]['summaryScore']['value'])*100
 
         try:
             if "return_raw" in options and options["return_raw"]:
