@@ -26,9 +26,6 @@ class EmptyText(Exception):
 class EmptyResponse(Exception):
     pass
 
-class EmptyTableName(Exception):
-    pass
-
 class EmptyFileName(Exception):
     pass
 
