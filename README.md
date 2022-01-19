@@ -1,6 +1,6 @@
 # perspective.py
 
-An easy-to-use API wrapper written in Python, for [Perspective API](https://www.perspectiveapi.com/), an API that uses machine learning to identify "toxic" comments.
+The perspective.py library is an easy-to-use API wrapper written in Python for [Perspective API](https://www.perspectiveapi.com/), an API that uses machine learning to identify "toxic" comments.
 
 ## Installation
 
@@ -38,17 +38,17 @@ You can find a list of all attributes and languages each attribute supports in [
 ```python
 from perspective import Client, Attributes, utils
 
-# Creating the Client object with the API key
+# Create the Client object which we will use to make requests with the API key
 API_KEY = "your_api_key"
 client = Client(token = API_KEY)
 
-# Make a request to Perspective API with a text to analyze and requested attributes
+# Make a request to Perspective API with a text to analyze and the attributes that you want the text to be analyzed for
 response = client.analyze(text = "Hey! How are you?", requestedAttributes = [Attributes.TOXICITY, Attributes.INSULT])
 
-# Print the response (dict)
+# Print the response as a dictionary
 print(response)
 
-# Print the percent of TOXICITY attribute
+# Print the score value of TOXICITY attribute
 print(response["TOXICITY"]
 
 print("  ")
@@ -59,7 +59,7 @@ for attribute, result in response.items():
 
 print("  ")
 
-# Or, use utils.format_response to print a formatted text of the response
+# Or alternatively, use utils.format_response to print a formatted text of the response which would return almost the same result as the above code
 print(utils.format_response(response, align_right=True))
 ```
 
@@ -78,22 +78,22 @@ Toxicity: 7.02%
 
 As you can see in the output, `Client.analyze` returns a dictionary with requested attributes and their analysis results as percents. You can get percents of each attribute, or iterate over dictionary.
 
-## Example usage for creating a graph
+## Example usage for creating a bar chart
 ```python
 from perspective import Client, Attributes, utils
 
-# Creating the Client object with the API key
+# Create the Client object which we will use to make requests with the API key
 API_KEY = "your_api_key"
 client = Client(token = API_KEY)
 
-# Make a request to Perspective API with a text to analyze and requested attributes
+# Make a request to Perspective API with a text to analyze and the attributes that you want the text to be analyzed for
 response = client.analyze(text = "Hey! How are you?", requestedAttributes = Attributes.Production) # Attributes.Production includes all production-ready attributes
 
-# Create a graph and show it by popping up a window
+# Create a horizontal bar chart and show it by popping up a window
 utils.show_graph(response=response, title="Sample graph")
 
-# Or alternatively, you can save the graph
-utils.save_graph(response=response, filename="graph.png", title="Sample graph")
+# Or alternatively, you can save the chart to an image file
+utils.save_graph(response=response, filename="my_chart.png", title="Sample graph")
 ```
 
 ### Output
