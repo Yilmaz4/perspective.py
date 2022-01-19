@@ -35,7 +35,8 @@ class Utils:
     @staticmethod
     def format_response(response: dict, align_right: bool = False, sort_by: Optional[Literal["ascending", "descending"]] = None) -> str:
         """
-        Format the dictionary that the `analyze` function returned to a text which is easily readable by a human. The score values of attributes' digit count after the decimal will be decreased to 2 and the attribute names will be in lowercase. As an example, formatted text looks like the below text:
+        Format the dictionary that the `analyze` function returned to a text which is easily readable by a human. The score values of attributes' digit count after the decimal will be decreased to 2 and the
+        attribute names will be in lowercase. As an example, formatted text looks like the below text:
         
         ```d
         Toxicity:        97.64%
@@ -209,7 +210,7 @@ class Utils:
     @staticmethod
     def save_graph(response: dict, filename: str = "chart.png", title: Optional[str] = None, grid_lines: bool = False, **kwargs):
         r"""
-        Draws a bar chart/plot with the data that the `analyze` function returned and saves it as a *.png file with the specified filename to the specified directory, using the matplotlib library..
+        Draws a bar chart/plot with the data that the `analyze` function returned and saves it as a *.png file with the specified filename to the specified directory, using the matplotlib library.
 
         Parameters
         -----------
@@ -277,9 +278,10 @@ class Utils:
         plt.savefig(filename, bbox_inches='tight')
 
     @staticmethod
-    def save_data(response: dict, filename: str = "data.sqlite3", sort_by: Optional[Literal["ascending", "descending"]] = None, tablename: str = "response") -> None:
-        """
-        Saves the data that the `analyze` function returned to a SQLite3 database.
+    def save_data(response: dict, filename: str = "data.sqlite3", sort_by: Optional[Literal["ascending", "descending"]] = None) -> None:
+        r"""
+        Saves the data that the `analyze` function returned to a SQLite3 database. The database will have a table named `data` which shall contain attribute names in `attribute` column and the attribute's
+        score value in `value` column. The database will be recreated whenever you call this function with the same `filename` argument.
 
         Parameters
         -----------
@@ -289,15 +291,11 @@ class Utils:
             The path that you want the database to be saved, including the filename (such as `C:\path\to\my\database.sqlite3`). Default is "data.sqlite3" in the same directory script is running.
         sort_by: :class:`bool`
             Whether to sort the attributes ascending or descending according to their score values. If `None`, attributes will not be sorted. Default is `None`.
-        tablename: :class:`str`
-            The name of the table to be created in the database file. Default is `response`.
         """
         if response == {}:
             raise EmptyResponse("The response provided is an empty dictionary. Please make sure you're specifying the correct dictionary.") from None
         if filename.replace(" ","") == "":
             raise EmptyFileName("The filename cannot be an empty string.") from None
-        if tablename.replace(" ","") == "":
-            raise EmptyTableName("The tablename cannot be an empty string.") from None
 
         if "attributeScores" in response.keys():
             response_new = {}
@@ -314,11 +312,10 @@ class Utils:
             os.remove(filename)
         con = sql.connect(filename)
         cursor = con.cursor()
-        cursor.execute(f"CREATE TABLE IF NOT EXISTS {tablename} (attribute, value)")
-        cursor.execute(f"SELECT * FROM response")
-        
+        cursor.execute(f"CREATE TABLE IF NOT EXISTS data (attribute, value)")
+
         for attribute, value in response.items():
-            cursor.execute(f"INSERT INTO {tablename} VALUES ('{attribute.upper()}', {value})")
+            cursor.execute(f"INSERT INTO data VALUES ('{attribute.upper()}', {value})")
 
         con.commit()
         con.close()
