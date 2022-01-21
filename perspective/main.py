@@ -51,7 +51,7 @@ class Client:
             level=logging.WARNING,
             datefmt='%Y-%m-%d %H:%M:%S'
         )
-        if not not logging:
+        if not not logging_level:
             levels = {"NOTSET":logging.NOTSET, "DEBUG":logging.DEBUG, "INFO":logging.INFO, "WARN":logging.WARN, "ERROR":logging.ERROR, "CRITICAL":logging.CRITICAL}
             levels_inverted = {v: k for k, v in levels.items()}
             try:
