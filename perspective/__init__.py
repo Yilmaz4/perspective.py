@@ -12,5 +12,5 @@ __copyright__ = "Copyright 2021 Yilmaz Alpaslan"
 __version__ = "0.3.2"
 
 from .main import Client
-from .attributes import Attributes
+from .attributes import Attributes, all_attr_grps, all_attrs, all_expr_attrs, all_newy_attrs, all_prod_attrs
 from .utils import Utils as utils
