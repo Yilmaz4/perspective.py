@@ -26,6 +26,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 import sqlite3 as sql
 import os
+import json
 
 from .errors import *
 
@@ -35,7 +36,7 @@ class Utils:
     @staticmethod
     def format_response(response: dict, align_right: bool = False, sort_by: Optional[Literal["ascending", "descending"]] = None) -> str:
         """
-        Format the dictionary that the `analyze` function returned to a text which is easily readable by a human. The score values of attributes' digit count after the decimal will be decreased to 2 and the
+        Formats the dictionary that the `analyze` function returned to a text which is easily readable by a human. The score values of attributes' digit count after the decimal will be decreased to 2 and the
         attribute names will be in lowercase. As an example, formatted text looks like the below text:
         
         ```d
@@ -334,6 +335,10 @@ class Utils:
             What shall the response be sorted according to. It can be either "alphabetical" or "value".
         order: :class:`Literal["ascending", "descending"]`
             In which order shall the response be sorted. It can be either "ascending" or "descending".
+        
+        Returns
+        --------
+        
         """
         if sort_by not in ["alphabetical", "value"]:
             raise UnknownSorting("The sort_by argument can be either \"alphabetical\" or \"value\"") from None
@@ -349,3 +354,31 @@ class Utils:
             del response_new
 
         return {k: v for k, v in sorted(response.items(), reverse=True if order == "descending" else False, key=lambda item: item[1 if sort_by == "value" else 0])}
+
+    @staticmethod
+    def export_json(response: dict, filename: str):
+        r"""
+        Exports the dictionary that the `analyze` function returned in a JSON format.
+
+        Parameters
+        -----------
+        response: :class:`dict`
+            The dictionary that the `analyze` function returned.
+        filename: :class:`str`
+            The file to save the response in a JSON format to.
+        """
+        if response == {}:
+            raise EmptyResponse("The response provided is an empty dictionary. Please make sure you're specifying the correct dictionary.") from None
+        if filename.replace(" ","") == "":
+            raise EmptyFileName("The filename cannot be an empty string.") from None
+
+        if "attributeScores" in response.keys():
+            response_new = {}
+
+            for attribute in response["attributeScores"].keys():
+                response_new[str(attribute)] = float(response['attributeScores'][str(attribute)]['summaryScore']['value']) * 100
+            response = response_new
+            del response_new
+
+        with open(filename, mode="w", encoding="utf-8") as file:
+            file.write(json.dumps(response, indent=4))
