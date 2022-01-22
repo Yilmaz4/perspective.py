@@ -46,3 +46,6 @@ class MissingAttributes(Exception):
 
 class InvalidFormat(Exception):
     pass
+
+class UnknownSorting(Exception):
+    pass
