@@ -319,3 +319,33 @@ class Utils:
 
         con.commit()
         con.close()
+    
+    @staticmethod
+    def sort_respone(response: dict, sort_by: Literal["alphabetical", "value"] = "value", order: Literal["ascending", "descending"] = "descending") -> dict:
+        r"""
+        Sorts the dictionary that the `analyze` function returned according to your preference, such as alphabetical or according to the score value;
+        ascending or descending.
+
+        Parameters
+        -----------
+        response: :class:`dict`
+            The dictionary that the `analyze` function returned.
+        sort_by: :class:`Literal["alphabetical", "value"]`
+            What shall the response be sorted according to. It can be either "alphabetical" or "value".
+        order: :class:`Literal["ascending", "descending"]`
+            In which order shall the response be sorted. It can be either "ascending" or "descending".
+        """
+        if sort_by not in ["alphabetical", "value"]:
+            raise UnknownSorting("The sort_by argument can be either \"alphabetical\" or \"value\"") from None
+        elif order not in ["ascending", "descending"]:
+            raise UnknownSorting("The order argument can be either \"ascending\" or \"descending\"") from None
+
+        if "attributeScores" in response.keys():
+            response_new = {}
+
+            for attribute in response["attributeScores"].keys():
+                response_new[str(attribute)] = float(response['attributeScores'][str(attribute)]['summaryScore']['value']) * 100
+            response = response_new
+            del response_new
+
+        return {k: v for k, v in sorted(response.items(), reverse=True if order == "descending" else False, key=lambda item: item[1 if sort_by == "value" else 0])}
