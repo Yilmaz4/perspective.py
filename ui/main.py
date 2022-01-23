@@ -58,7 +58,7 @@ class Interface(Tk):
     def __init__(self):
         self.height = 503
         self.width = 401
-        self.version = "v0.2.0"
+        self.version = "v0.3.4"
         super().__init__()
         self.title("Perpsective API Wrapper")
         self.geometry(f"{self.width}x{self.height}")
