@@ -27,8 +27,8 @@ try:
     from tkinter import messagebox
     from tkinter.filedialog import asksaveasfilename
 except ModuleNotFoundError or ImportError:
-    from Tkinter import messagebox
-    messagebox.showwarning("Unsupported Python", "Python 2.x is not supported. Consider using Python 3.x.")
+    import ctypes
+    ctypes.windll.user32.MessageBoxW(0, "Python 2.x is not supported. Consider using Python 3.x.", "Unsupported Python", 1)
     exit(1)
 
 try:
@@ -127,13 +127,13 @@ class Interface(Tk):
         path = asksaveasfilename(title="Save the response as a database file", filetypes=(("SQLite3 Database", "*.sqlite3"), ("Typical Database", "*.db"), ), initialfile="response.sqlite3")
         if not not path:
             utils.save_data(response=self.response, filename=path, sort_by="descending")
-            messagebox.showinfo("Successfull", "The database file has been successfully created in the specified path.")
+            messagebox.showinfo("Successfull", "The response has been successfully saved to a database file in the specified directory.")
 
     def export_json(self, event = None):
         path = asksaveasfilename(title="Save the response as a JSON file", filetypes=(("JSON File", "*.json"), ("All Files", "*.*"), ), initialfile="response.json")
         if not not path:
             utils.export_json(response=self.response, filename=path)
-            messagebox.showinfo("Successfull", "The JSON file has been successfully created in the specified path.")
+            messagebox.showinfo("Successfull", "The response has been successfully exported in JSON format.")
 
     def initialize_user_interface(self):
         self.textFrame = LabelFrame(self, text="Text", height=78, width=381)
@@ -281,7 +281,7 @@ class Interface(Tk):
         def show_graph(event = None):
             utils.show_graph(self.response)
         def view_source(event = None):
-            subprocess.Popen([sys.executable.replace("python.exe", "pythonw.exe"), sys.exec_prefix + "\\Lib\\idlelib\\idle.pyw", os.path.realpath(__file__)])
+            subprocess.Popen(f"\"{sys.executable}\" -m idlelib \"{os.path.realpath(__file__)}\"")
         def analyze(event = None):
             newAllCheckButtons = []
             for variable in self.allCheckButtons:
