@@ -91,7 +91,7 @@ class Interface(Tk):
         if bool(self.varUnsubstantial.get()):requestedAttributes.append("UNSUBSTANTIAL")
 
         try:
-            client = Client(token = "AIzaSyA-yzvgANWE1STU9MTbTLrS3rj1956tVAs", logging_level=None)
+            client = Client(token = "token", logging_level=None)
         except HTTPException:
             messagebox.showerror("No Internet", "Your internet connection appears to be offline. Please try again later.")
             self.analyzeButton.configure(state=NORMAL)
