@@ -4,32 +4,32 @@ The perspective.py library is an easy-to-use API wrapper written in Python for [
 
 ## Installation
 
-Download & install git from https://git-scm.com/ and run below command:
+Download & install git for your operating system from https://git-scm.com/ and run below command in command prompt or powershell:
 
 ```powershell
 python -m pip install --upgrade git+https://github.com/Yilmaz4/perspective.py.git
 ```
 
-Or alternatively, you can install from PyPI (Python Package Index):
+Or alternatively, you can install from the PyPI (Python Package Index) server using pip:
 ```powershell
 pyhton -m pip install --upgrade perspective.py
 ```
 
 ## Getting an API key
 
-You need to get an API key from Google to use Perspective API. Instructions are explained in [this article](https://developers.perspectiveapi.com/s/docs-get-started).
+You need to have an API key from Google to use Perspective API. Instructions are explained in [this article](https://developers.perspectiveapi.com/s/docs-get-started).
 
 ## Command arguments
 
 > `text: str` The text to analyze
 >
-> `requestedAttributes: list[str]` A list of attributes to analyze the text for.
+> `attributes: list[str]` A list of attributes to analyze the text for.
 >
 > `language: str` The language of text.
 
-You can use either `Attributes.TOXICITY` object or simply `"TOXICITY"` as a string for `requestedAttributes` argument.
+You can use either `Attributes.TOXICITY` object (for example) or simply `"TOXICITY"` as a string for `attributes` argument. Alternatively, you can use groups, such as `Attributes.Production` which contains all production-ready attributes or `Attributes.Experimental` which contains all experimental attributes.
 
-You can specify the language of the text by using `language` argument. `language` argument accepts both language codes (such as "en" or "es") and language names (such as "English" or "Spanish"). Small spelling mistakes in language names can also be accepted (such as "Eglish" or "Spamish"). If you set `language` argument to `None`, language will be automatically detected.
+You can specify the language of the text by using `language` argument. `language` argument accepts both language codes (such as "en" or "es") and language names (such as "English" or "Spanish"). Small spelling mistakes in language names can also be accepted (such as "Eglish" or "Spamish"). If you set `language` argument to `None`, language will be automatically detected by the API itself.
 
 You can find a list of all attributes and languages each attribute supports in [this article](https://developers.perspectiveapi.com/s/about-the-api-attributes-and-languages).
 
@@ -43,7 +43,7 @@ API_KEY = "your_api_key"
 client = Client(token = API_KEY)
 
 # Make a request to Perspective API with a text to analyze and the attributes that you want the text to be analyzed for
-response = client.analyze(text = "Hey! How are you?", requestedAttributes = [Attributes.TOXICITY, Attributes.INSULT])
+response = client.analyze(text = "Hey! How are you?", attributes = [Attributes.TOXICITY, Attributes.INSULT])
 
 # Print the response as a dictionary
 print(response)
