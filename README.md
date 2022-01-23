@@ -17,7 +17,7 @@ pyhton -m pip install --upgrade perspective.py
 
 ## Getting an API key
 
-You need to have an API key from Google to use Perspective API. Instructions are explained in [this article](https://developers.perspectiveapi.com/s/docs-get-started).
+You need to have an API key from Google to use Perspective API. Instructions to get an API key are explained in [this article](https://developers.perspectiveapi.com/s/docs-get-started).
 
 ## Command arguments
 
