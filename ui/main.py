@@ -22,25 +22,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 try:
-    from tkinter import *
-    from tkinter.ttk import *
-    from tkinter import messagebox
+    from tkinter import (
+        Tk, TclError, DISABLED, NORMAL,
+        END, StringVar, IntVar, Menu,
+        VERTICAL, messagebox
+    )
+    from tkinter.ttk import (
+        LabelFrame, Entry, Button,
+        Checkbutton, Combobox, Label,
+        Scrollbar, Treeview
+    )
     from tkinter.filedialog import asksaveasfilename
 except ModuleNotFoundError or ImportError:
-    import ctypes
-    ctypes.windll.user32.MessageBoxW(0, "Python 2.x is not supported. Consider using Python 3.x.", "Unsupported Python", 1)
+    __import__("ctypes").windll.user32.MessageBoxW(0, "Python 2.x is not supported. Consider using Python 3.x.", "Unsupported Python", 0)
     exit(1)
 
 try:
+    from perspective import Client, utils
+    from perspective.errors import (
+        UnsupportedLanguage, HTTPException,
+        InvalidToken,
+    )
+
+    from sys import executable
+    from subprocess import Popen
+    from os import path as ospath
+    from json import dumps
     from webbrowser import open as openweb
-    from perspective import *
-    from perspective.errors import *
-    import os, sys, subprocess, json
 except ModuleNotFoundError or ImportError as details:
-    from sys import exc_info
-    root = Tk()
-    root.withdraw()
-    messagebox.showerror("Missing Libraries", str(exc_info()[0]).replace("<class '","").replace("'>","") + ": " + str(exc_info()[1]))
+    __import__("tkinter").Tk().withdraw()
+    messagebox.showerror("Missing Libraries", str(__import__("sys").exc_info()[0]).replace("<class '","").replace("'>","") + ": " + str(__import__("sys").exc_info()[1]))
     exit(1)
 
 class Interface(Tk):
@@ -73,27 +84,17 @@ class Interface(Tk):
         text = self.varText.get()
         requestedAttributes = []
 
-        if bool(self.varToxicity.get()):requestedAttributes.append("TOXICITY")
-        if bool(self.varSevere_Toxicity.get()):requestedAttributes.append("SEVERE_TOXICITY")
-        if bool(self.varIdentity_Attack.get()):requestedAttributes.append("IDENTITY_ATTACK")
-        if bool(self.varInsult.get()):requestedAttributes.append("INSULT")
-        if bool(self.varProfanity.get()):requestedAttributes.append("PROFANITY")
-        if bool(self.varThreat.get()):requestedAttributes.append("THREAT")
-        if bool(self.varSexually_Explicit.get()):requestedAttributes.append("SEXUALLY_EXPLICIT")
-        if bool(self.varFlirtation.get()):requestedAttributes.append("FLIRTATION")
-        if bool(self.varAttack_On_Author.get()):requestedAttributes.append("ATTACK_ON_AUTHOR")
-        if bool(self.varAttack_On_Commenter.get()):requestedAttributes.append("ATTACK_ON_COMMENTER")
-        if bool(self.varIncoherent.get()):requestedAttributes.append("INCOHERENT")
-        if bool(self.varInflammatory.get()):requestedAttributes.append("INFLAMMATORY")
-        if bool(self.varLikely_To_Reject.get()):requestedAttributes.append("LIKELY_TO_REJECT")
-        if bool(self.varObscene.get()):requestedAttributes.append("OBSCENE")
-        if bool(self.varSpam.get()):requestedAttributes.append("SPAM")
-        if bool(self.varUnsubstantial.get()):requestedAttributes.append("UNSUBSTANTIAL")
+        for variable in self.allCheckButtons:
+            bool(getattr(self, variable).get()) and requestedAttributes.append(variable.upper().replace("VAR", ""))
 
         try:
-            client = Client(token = "token", logging_level=None)
+            client = Client(token = "AIzaSyA-yzvgANWE1STU9MTbTLrS3rj1956tVAs", logging_level=None)
         except HTTPException:
             messagebox.showerror("No Internet", "Your internet connection appears to be offline. Please try again later.")
+            self.analyzeButton.configure(state=NORMAL)
+            return
+        except InvalidToken:
+            messagebox.showerror("Invalid Token", "The API token you've entered is not valid.")
             self.analyzeButton.configure(state=NORMAL)
             return
         try:
@@ -144,7 +145,7 @@ class Interface(Tk):
                 self.clearButton.configure(state=NORMAL)
                 newAllCheckButtons = []
                 for variable in self.allCheckButtons:
-                    newAllCheckButtons.append(variable.get())
+                    newAllCheckButtons.append(getattr(self, variable).get())
                 if 1 in newAllCheckButtons:
                     self.analyzeButton.configure(state=NORMAL)
                 else:
@@ -156,7 +157,7 @@ class Interface(Tk):
         def checkButtonCallback(*args, **kwargs):
             newAllCheckButtons = []
             for variable in self.allCheckButtons:
-                newAllCheckButtons.append(variable.get())
+                newAllCheckButtons.append(getattr(self, variable).get())
             if 1 in newAllCheckButtons:
                 if self.varText.get() != "":
                     self.analyzeButton.configure(state=NORMAL)
@@ -196,10 +197,10 @@ class Interface(Tk):
         self.varSpam = IntVar();self.varSpam.set(0);self.radioSpam = Checkbutton(self.attrsFrame, text="Spam", takefocus=0, variable=self.varSpam, onvalue=1, offvalue=0, command=checkButtonCallback)
         self.varUnsubstantial = IntVar();self.varUnsubstantial.set(0);self.radioUnsubstantial = Checkbutton(self.attrsFrame, text="Unsubstantial", takefocus=0, variable=self.varUnsubstantial, onvalue=1, offvalue=0, command=checkButtonCallback)
 
-        self.allCheckButtons = [self.varToxicity, self.varSevere_Toxicity, self.varIdentity_Attack,
-            self.varInsult, self.varProfanity, self.varThreat, self.varFlirtation, self.varSexually_Explicit,
-            self.varAttack_On_Author, self.varAttack_On_Commenter, self.varIncoherent, self.varInflammatory,
-            self.varLikely_To_Reject, self.varObscene, self.varSpam, self.varUnsubstantial]
+        self.allCheckButtons = ["varToxicity", "varSevere_Toxicity", "varIdentity_Attack",
+            "varInsult", "varProfanity", "varThreat", "varFlirtation", "varSexually_Explicit",
+            "varAttack_On_Author", "varAttack_On_Commenter", "varIncoherent", "varInflammatory",
+            "varLikely_To_Reject", "varObscene", "varSpam", "varUnsubstantial"]
 
         self.radioToxicity.place(x=5, y=0)
         self.radioSevere_Toxicity.place(x=180, y=0)
@@ -253,14 +254,14 @@ class Interface(Tk):
         self.exportJSONButton = Button(self, text="Export JSON", width=16, takefocus=0, command=self.export_json, state=DISABLED)
         self.exportJSONButton.place(x=172, y=449)
 
-        self.copyJSONButton = Button(self, text="Copy JSON", width=16, takefocus=0, command=lambda: (self.clipboard_clear(), self.clipboard_append(str(json.dumps(self.response, indent=4)))), state=DISABLED)
+        self.copyJSONButton = Button(self, text="Copy JSON", width=16, takefocus=0, command=lambda: (self.clipboard_clear(), self.clipboard_append(str(dumps(self.response, indent=4)))), state=DISABLED)
         self.copyJSONButton.place(x=286, y=449)
 
     def initialize_menu_bar(self):
         self.menuBar = Menu(self)
 
         self.fileMenu = Menu(self.menuBar, tearoff=0)
-        self.fileMenu.add_command(label = "View source", accelerator="Alt+S", command=lambda: subprocess.Popen([sys.executable.replace("python.exe", "pythonw.exe"), sys.exec_prefix + "\\Lib\\idlelib\\idle.pyw", os.path.realpath(__file__)]))
+        self.fileMenu.add_command(label = "View source", accelerator="Alt+S", command=lambda: Popen(f"\"{executable}\" -m idlelib \"{ospath.realpath(__file__)}\""))
         self.fileMenu.add_separator()
         self.fileMenu.add_command(label = "GitHub page", command=lambda: openweb("https://github.com/Yilmaz4/perspective.py"))
         self.fileMenu.add_command(label = "PyPI page", command=lambda: openweb("https://pypi.org/project/perspective.py"))
@@ -281,11 +282,11 @@ class Interface(Tk):
         def show_graph(event = None):
             utils.show_graph(self.response)
         def view_source(event = None):
-            subprocess.Popen(f"\"{sys.executable}\" -m idlelib \"{os.path.realpath(__file__)}\"")
+            Popen(f"\"{executable}\" -m idlelib \"{ospath.realpath(__file__)}\"")
         def analyze(event = None):
             newAllCheckButtons = []
             for variable in self.allCheckButtons:
-                newAllCheckButtons.append(variable.get())
+                newAllCheckButtons.append(getattr(self, variable).get())
             if 1 in newAllCheckButtons and self.varText.get() != "":
                 self.analyze()
         def give_focus(event = None):
