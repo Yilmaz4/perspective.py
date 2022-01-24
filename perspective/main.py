@@ -160,6 +160,7 @@ class Client:
                 return lang_code
         else:
             return lang_code
+
     @staticmethod
     def __get_language_name(language: str) -> Optional[str]:
         try:
@@ -328,7 +329,4 @@ class Client:
         except Exception:
             pass
         finally:
-            try:
-                logger.info("Perspective API text analysis has been completed. Request took {:.2f} seconds to process. The attribute with highest score value is {} with a score value of {:.2f}.".format(time.time() - start_timestamp, utils.get_highest(result), result[utils.get_highest(result)]))
-            except EmptyResponse:
-                logger.info("Perspective API text analysis has been completed. Request took {:.2f} seconds to process. However, the response was empty because none of the requested attributes support the language of the text entered.".format(time.time() - start_timestamp))
+            logger.info("Perspective API text analysis has been completed. Request took {:.2f} seconds to process. ".format(time.time() - start_timestamp) + "The attribute with highest score value is {} with a score value of {:.2f}.".format(utils.get_highest(result), result[utils.get_highest(result)]) if result != {} else "However, the response was empty because none of the requested attributes support the language of the text entered.".format(time.time() - start_timestamp))
