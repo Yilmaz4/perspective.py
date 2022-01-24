@@ -19,20 +19,6 @@ pyhton -m pip install --upgrade perspective.py
 
 You need to have an API key from Google to use Perspective API. Instructions to get an API key are explained in [this article](https://developers.perspectiveapi.com/s/docs-get-started).
 
-## Command arguments
-
-> `text: str` The text to analyze
->
-> `attributes: list[str]` A list of attributes to analyze the text for.
->
-> `language: str` The language of text.
-
-You can use either `Attributes.TOXICITY` object (for example) or simply `"TOXICITY"` as a string for `attributes` argument. Alternatively, you can use groups, such as `Attributes.Production` which contains all production-ready attributes or `Attributes.Experimental` which contains all experimental attributes.
-
-You can specify the language of the text by using `language` argument. `language` argument accepts both language codes (such as "en" or "es") and language names (such as "English" or "Spanish"). Small spelling mistakes in language names can also be accepted (such as "Eglish" or "Spamish"). If you set `language` argument to `None`, language will be automatically detected by the API itself.
-
-You can find a list of all attributes and languages each attribute supports in [this article](https://developers.perspectiveapi.com/s/about-the-api-attributes-and-languages).
-
 ## Example usage
 
 ```python
@@ -77,6 +63,20 @@ Toxicity: 7.02%
 ```
 
 As you can see in the output, `Client.analyze` returns a dictionary with requested attributes and their analysis results as percents. You can get percents of each attribute, or iterate over dictionary.
+
+## Command arguments
+
+> `text: str` The text to analyze.
+>
+> `attributes: list[str]` A list of attributes to analyze the text for. Defaults to `perspective.Attributes.Production`.
+>
+> `language: str` The language of text. If `None`, language will be automatically detected by the API itself.
+
+You can use either `Attributes.TOXICITY` object (for example) or simply `"TOXICITY"` as a string for `attributes` argument. Alternatively, you can use groups, such as `Attributes.Production` which contains all production-ready attributes or `Attributes.Experimental` which contains all experimental attributes.
+
+You can specify the language of the text by using `language` argument. `language` argument accepts both language codes (such as "en" or "es") and language names (such as "English" or "Spanish"). Small spelling mistakes in language names can also be accepted (such as "Eglish" or "Spamish"). If you set `language` argument to `None`, language will be automatically detected by the API itself.
+
+You can find a list of all attributes and languages each attribute supports in [this article](https://developers.perspectiveapi.com/s/about-the-api-attributes-and-languages).
 
 ## Example usage for creating a bar chart
 ```python
