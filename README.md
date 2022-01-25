@@ -103,7 +103,7 @@ utils.save_graph(response=response, filename="my_chart.png", title="Sample graph
 
 MIT License
 
-Copyright (c) 2021-2022 Yilmaz Alpaslan
+Copyright (c) 2017-2022 Yilmaz Alpaslan
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
