@@ -3,6 +3,8 @@ Perspective API Wrapper
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 An easy-to-use API wrapper for Perspective API written in Python.
+
+Copyright (c) 2017-2022 Yilmaz Alpaslan
 """
 
 __title__ = "perspective.py"
